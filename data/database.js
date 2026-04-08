@@ -1,3 +1,4 @@
+
 import { MongoClient } from 'mongodb';
 import { config } from 'dotenv';
 config()
@@ -11,10 +12,11 @@ const uri = `mongodb+srv://${dbUser}:${dbPassword}@${clusterAddress}/?retryWrite
 const client = new MongoClient(uri);
 
 console.log('Trying to connect to db');
-
+let database;
 try {
   await client.connect();
   await client.db(dbName).command({ ping: 1 });
+  database = client.db(dbName);
   console.log('Connected successfully to server');
 } catch (error) {
   console.log('Connection failed.');
@@ -22,6 +24,9 @@ try {
   console.log('Connection closed.');
 }
 
-const database = client.db(dbName);
-
-export default database;
+export function getDb() {
+  if (!database) {
+    throw new Error('Database not initialized');
+  }
+  return database;
+}
