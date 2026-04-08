@@ -9,5 +9,5 @@ app.use(bodyParser.json());
 app.use(eventRoutes);
 
 app.listen(process.env.PORT, () => {
-    console.log(`Server is listening on port ${process.env.PORT}`);
+    console.log(`Server is now listening on port ${process.env.PORT}`);
 });
