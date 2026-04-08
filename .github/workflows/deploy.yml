@@ -4,6 +4,11 @@ on:
     branches:
       - main
       - dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+  
 env:
   MONGODB_DB_NAME: ${{ secrets.MONGODB_DB_NAME }}
 jobs:
@@ -27,6 +32,12 @@ jobs:
         run: | 
           echo "envs: ${{env.MONGODB_CLUSTER_ADDRESS}}"
           npm ci
+      - name: Check env presence
+        run: |
+          [ -n "$MONGODB_CLUSTER_ADDRESS" ] && echo "cluster address present" || echo "cluster address missing"
+          [ -n "$MONGODB_USERNAME" ] && echo "username present" || echo "username missing"
+          [ -n "$MONGODB_PASSWORD" ] && echo "password present" || echo "password missing"
+          [ -n "$PORT" ] && echo "port present" || echo "port missing"
       - name: Run server
         run: npm start & npx wait-on http://127.0.0.1:$PORT
       - name: Run tests
