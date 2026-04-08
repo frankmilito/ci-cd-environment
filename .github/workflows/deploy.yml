@@ -40,8 +40,11 @@ jobs:
           [ -n "$PORT" ] && echo "port present" || echo "port missing"
       - name: |
           npm start > server.log 2>&1 &
-          npx wait-on http://127.0.0.1:$PORT
+          npx wait-on --timeout 30000 tcp:127.0.0.1:$PORT
         run: npm start & npx wait-on http://127.0.0.1:$PORT
+      - name: Print server logs
+        if: always()
+        run: cat server.log
       - name: Run tests
         run: npm test
       - name: Output information
