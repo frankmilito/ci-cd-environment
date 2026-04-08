@@ -29,28 +29,13 @@ jobs:
           node-version: 20
           cache: 'npm'
       - name: Install dependencies
-        run: | 
-          echo "envs: ${{env.MONGODB_CLUSTER_ADDRESS}}"
-          npm ci
-      - name: Check env presence
-        run: |
-          [ -n "$MONGODB_CLUSTER_ADDRESS" ] && echo "cluster address present" || echo "cluster address missing"
-          [ -n "$MONGODB_USERNAME" ] && echo "username present" || echo "username missing"
-          [ -n "$MONGODB_PASSWORD" ] && echo "password present" || echo "password missing"
-          [ -n "$PORT" ] && echo "port present" || echo "port missing"
+        run: npm ci"
       - name: run server
         run: |
             npm start > server.log 2>&1 &
             npx wait-on --timeout 30000 tcp:127.0.0.1:$PORT
-      - name: Print server logs
-        if: always()
-        run: cat server.log
       - name: Run tests
         run: npm test
-      - name: Output information
-        run: |
-          echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME}}"
-          echo "env: ${{ env}}"
   deploy:
     needs: test
     runs-on: ubuntu-latest
